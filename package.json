@@ -1,0 +1,14 @@
+{
+  "name": "express-static-files",
+  "version": "1.0.0",
+  "description": "Configure Express to serve static files",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
+    "express": "^4.13.3"
+  }
+}
