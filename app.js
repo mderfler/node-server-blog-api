@@ -10,32 +10,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Define the port to run on
 app.set('port', 3000);
 
+
 app.get('/posts',function(req,res){
-    res.sendFile(path.normalize(__dirname + '/posts.json'))
+	var requireNew = require('require-new');
+	var currentPosts = requireNew('./posts.json');
+    res.send(currentPosts);
+    console.log("get all posts");
+    console.log(currentPosts);
+    currentPosts=null;
 })
 
 var fs = require('fs');
-var postsJson;
-
-// Read the file and send to the callback
-fs.readFile('./posts.json', handleFile)
-
-//callback function
-function handleFile(err, data) {
-    if (err) throw err
-    postsJson = JSON.parse(data)
-    return postsJson;
-}
 
 app.get('/posts/:id', function(req , res){
-	var postFound = postsJson.filter(function(item) {
-    	return item.id == req.params.id;
+ 	var requireNew = require('require-new');
+	var currentPosts = requireNew('./posts.json');
+	var foundPost = currentPosts.filter(function(item){ 
+		return item.id == req.params.id; 
 	});
-  res.send(JSON.stringify(postFound[0]));
+	res.send(foundPost[0]);
+  currentPosts=null;
 });
 
 app.post('/newPost', function(req, res) {
-	var currentPosts = require('./posts.json');
+	var requireNew = require('require-new');
+	var currentPosts = requireNew('./posts.json');
     var title = req.body.title;
     var categories = req.body.categories;
     var content = req.body.content;
@@ -47,23 +46,24 @@ app.post('/newPost', function(req, res) {
 	  if(err){console.log(err)};
 	});
 	    res.send("posted");
+	    currentPosts=null;
 });
 
 app.delete('/deletePost/:id', function(req , res){
-	var currentPosts = require('./posts.json');
+	var requireNew = require('require-new');
+	var currentPosts = requireNew('./posts.json');
 	var shortenedPosts = currentPosts.filter(function(item){ 
 		return item.id != req.params.id; 
 	});
-	fs.unlink('./posts.json', function(err) {
-	   if (err) {
-	       return console.error(err);
-	   }
-	});
 
 	fs.writeFile('./posts.json', JSON.stringify(shortenedPosts), function (err) {
+	    currentPosts=null;
 	    if(err){console.log(err)};
 	});
   res.send("deleted");
+  console.log("deleted a post");
+console.log(shortenedPosts);
+currentPosts=null;
 });
 
 

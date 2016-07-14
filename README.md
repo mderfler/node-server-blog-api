@@ -1,4 +1,4 @@
-# express-static-files
+# express-static-file-server as blog api
 
 ## Running
 
