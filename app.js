@@ -36,7 +36,7 @@ app.post('/newPost', function(req, res) {
     var content = req.body.content;
     var newestPost = {"id": Math.floor((Math.random()*10000) + 1), "title": title, "categories": categories, "content":content};
 
-	currentPosts.push(newestPost);
+	currentPosts.unshift(newestPost);
 
 	fs.writeFile('./posts.json', JSON.stringify(currentPosts), function (err) {
 	  if(err){console.log(err)};
@@ -68,7 +68,7 @@ app.put('/posts/:id', function(req , res){
     var content = req.body.content;
     var updatedPost = {"id": parseInt(req.params.id), "title": title, "categories": categories, "content":content};
 
-	otherPosts.push(updatedPost);
+	otherPosts.unshift(updatedPost);
 	fs.writeFile('./posts.json', JSON.stringify(otherPosts), function (err) {
 	    if(err){console.log(err)};
 	});
