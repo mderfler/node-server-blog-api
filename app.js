@@ -15,9 +15,6 @@ app.get('/posts',function(req,res){
 	var requireNew = require('require-new');
 	var currentPosts = requireNew('./posts.json');
     res.send(currentPosts);
-    console.log("get all posts");
-    console.log(currentPosts);
-    currentPosts=null;
 })
 
 var fs = require('fs');
@@ -29,7 +26,6 @@ app.get('/posts/:id', function(req , res){
 		return item.id == req.params.id; 
 	});
 	res.send(foundPost[0]);
-  currentPosts=null;
 });
 
 app.post('/newPost', function(req, res) {
@@ -45,8 +41,7 @@ app.post('/newPost', function(req, res) {
 	fs.writeFile('./posts.json', JSON.stringify(currentPosts), function (err) {
 	  if(err){console.log(err)};
 	});
-	    res.send("posted");
-	    currentPosts=null;
+ res.send(newestPost);    
 });
 
 app.delete('/deletePost/:id', function(req , res){
@@ -57,15 +52,29 @@ app.delete('/deletePost/:id', function(req , res){
 	});
 
 	fs.writeFile('./posts.json', JSON.stringify(shortenedPosts), function (err) {
-	    currentPosts=null;
 	    if(err){console.log(err)};
 	});
   res.send("deleted");
-  console.log("deleted a post");
-console.log(shortenedPosts);
-currentPosts=null;
 });
 
+app.put('/posts/:id', function(req , res){
+ 	var requireNew = require('require-new');
+	var currentPosts = requireNew('./posts.json');
+	var otherPosts = currentPosts.filter(function(item){ 
+		return item.id != req.params.id; 
+	});
+	var title = req.body.title;
+    var categories = req.body.categories;
+    var content = req.body.content;
+    var updatedPost = {"id": parseInt(req.params.id), "title": title, "categories": categories, "content":content};
+
+	otherPosts.push(updatedPost);
+	fs.writeFile('./posts.json', JSON.stringify(otherPosts), function (err) {
+	    if(err){console.log(err)};
+	});
+
+	res.send(updatedPost);
+});
 
 // Listen for requests
 var server = app.listen(app.get('port'), function() {
